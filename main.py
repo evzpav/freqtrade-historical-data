@@ -25,7 +25,7 @@ def minutes_of_new_data(symbol, kline_size, data, source):
     new = pd.to_datetime(binance_client.get_klines(symbol=symbol, interval=kline_size)[-1][0], unit='ms')
     return old, new
 
-def get_all_binance(symbol, kline_size, save = False):
+def get_all_binance(symbol, kline_size, save = False, basecoin = 'BTC'):
 
     data_df = pd.DataFrame()
 
@@ -37,7 +37,7 @@ def get_all_binance(symbol, kline_size, save = False):
     
     klines = binance_client.get_historical_klines(symbol, kline_size, oldest_point.strftime("%d %b %Y %H:%M:%S"), newest_point.strftime("%d %b %Y %H:%M:%S"))
 
-    parsedSymbol = symbol[0:-3]+ "_"+ symbol[-3:]
+    parsedSymbol = symbol[0:-len(basecoin)]+ "_"+ symbol[-len(basecoin):]
     filename = './binance/%s-%s.json' % (parsedSymbol, kline_size)
     
     with open(filename, 'w') as f:
@@ -61,23 +61,27 @@ def get_all_binance(symbol, kline_size, save = False):
         f.write("]")
         
 
-# For Binance
-binance_symbols = [
-            "LTCBTC",
-            "ETCBTC",
-            "DASHBTC",
-            "ZECBTC",
-            "XLMBTC",
-            "XMRBTC",
-            "XRPBTC",
-            "BNBBTC",
-            "LINKBTC",
-            "EOSBTC",
-            "TRXBTC",
-            "ADABTC",
-            "IOTABTC",
-            "XEMBTC"
-]
+symbols = [
+            "ETH",
+            "XRP",
+            "EOS",
+            "LTC",
+            "ETC",
+            "DASH",
+            "ZEC",
+            "XLM",
+            "XMR",
+            "BNB",
+            "LINK",
+            "TRX",
+            "ADA",
+            "IOTA"
+        ]
 
-for symbol in binance_symbols:
-    get_all_binance(symbol, '4h', save = True)
+basecoin= 'USDT'
+timeframe='1h'
+
+for symbol in symbols:
+    get_all_binance(symbol+basecoin, timeframe, save = True, basecoin=basecoin)
+
+# get_all_binance("ETH"+basecoin, timeframe, save = True, basecoin=basecoin)
