@@ -7,13 +7,15 @@ from binance.client import Client
 from datetime import timedelta, datetime
 from dateutil import parser
 from tqdm import tqdm_notebook #(Optional, used for progress-bars)
+from dotenv import load_dotenv
 
 ### API
-binance_api_key = '[REDACTED]'    #Enter your own API-key here
-binance_api_secret = '[REDACTED]' #Enter your own API-secret here
+load_dotenv()
+binance_api_key = os.getenv("BINANCE_API_KEY")
+binance_api_secret = os.getenv("BINANCE_API_SECRET")
 
 ### CONSTANTS
-binsizes = {"1m": 1, "5m": 5, "1h": 60, "1d": 1440}
+binsizes = {"1m": 1, "5m": 5, "1h": 60, "4h": 240, "1d": 1440}
 batch_size = 750
 binance_client = Client(api_key=binance_api_key, api_secret=binance_api_secret)
 
@@ -41,7 +43,8 @@ def get_all_binance(symbol, kline_size, save = False):
     with open(filename, 'w') as f:
         f.write("[")
 
-        print(len(klines))
+        print("Total number of candles: {}".format(len(klines)))
+       
         for i, item in enumerate(klines):
             item = item[0:6]
             item[1] = float(item[1])
@@ -77,4 +80,4 @@ binance_symbols = [
 ]
 
 for symbol in binance_symbols:
-    get_all_binance(symbol, '1d', save = True)
+    get_all_binance(symbol, '4h', save = True)
